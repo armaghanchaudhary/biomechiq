@@ -1,7 +1,7 @@
-// src/utils/angleCalc.ts
-// Joint angle math utilities
+// src/domain/services/angleCalc.ts
+// Joint angle math + form scoring. PURE domain service (no framework imports).
 
-import { Landmark, JointDef, CoachingTip } from '../models/types';
+import { Landmark, JointDef, CoachingTip } from '../types';
 
 /**
  * Calculate the angle at point B, formed by vectors BA and BC.

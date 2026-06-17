@@ -1,7 +1,8 @@
-// src/services/speedEngine.ts
-// Speed computation from tracked object positions across frames
+// src/domain/services/speedEngine.ts
+// Speed computation + throw detection from tracked object positions across frames.
+// PURE domain service. Structurally satisfies the SpeedEstimator port (see src/ports).
 
-import { CalibrationData, SpeedSample, TrackedObject } from '../models/types';
+import { CalibrationData, SpeedSample, TrackedObject } from '../types';
 
 const DEFAULT_SCENE_WIDTH_METERS = 2.0;
 const MAX_SPEED_KMH = 350; // physical ceiling (fastest recorded ball: 263 km/h cricket)
@@ -124,10 +125,6 @@ export class SpeedEngine {
     return Math.round(sum / this.speedBuffer.length);
   }
 }
-
-// ── Singleton for app-wide use ─────────────────────────
-
-export const speedEngine = new SpeedEngine();
 
 // ── Throw / release detection ─────────────────────────
 

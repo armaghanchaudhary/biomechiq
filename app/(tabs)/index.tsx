@@ -42,7 +42,7 @@ import { useSessionStore } from '../../src/store/sessionStore';
 import { MetricsPanel } from '../../src/components/camera/MetricsPanel';
 import { SportSelector } from '../../src/components/ui/SportSelector';
 import { COLORS } from '../../src/utils/colors';
-import { POSE_CONNECTIONS } from '../../src/models/types';
+import { POSE_CONNECTIONS } from '@/domain';
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
 
