@@ -18,6 +18,8 @@ jobs:
       - run: npm ci
       - name: ESLint (hexagonal boundary rules)
         run: npm run lint
+      - name: Tests (replaceability + units)
+        run: npm test
       # NOTE: `tsc --noEmit` is intentionally not gated yet — the live-engine
       # screen references not-yet-built modules (BIOM-17). Add the type-check
       # job here once those land.
