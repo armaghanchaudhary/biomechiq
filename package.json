@@ -1,0 +1,74 @@
+{
+  "name": "biomechiq",
+  "version": "1.0.0",
+  "description": "Cross-platform sports biomechanics analyzer — Web, iOS, Android",
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "web": "expo start --web",
+    "build:ios": "eas build --platform ios",
+    "build:android": "eas build --platform android",
+    "build:web": "expo export --platform web",
+    "lint": "eslint . --ext .ts,.tsx",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "expo": "~55.0.0",
+    "expo-router": "~7.0.0",
+    "react": "19.2.0",
+    "react-native": "0.83.0",
+
+    "react-native-vision-camera": "^4.6.4",
+    "react-native-worklets-core": "^1.3.3",
+
+    "react-native-mediapipe-posedetection": "^1.0.0",
+    "@mediapipe/tasks-vision": "^0.10.18",
+
+    "react-native-fast-tflite": "^1.2.0",
+    "vision-camera-resize-plugin": "^3.1.0",
+
+    "@shopify/react-native-skia": "^1.10.0",
+    "react-native-reanimated": "~3.17.0",
+    "react-native-gesture-handler": "~2.21.0",
+
+    "zustand": "^5.0.0",
+    "@tanstack/react-query": "^5.60.0",
+
+    "@supabase/supabase-js": "^2.47.0",
+
+    "victory-native": "^41.0.0",
+
+    "expo-camera": "~16.0.0",
+    "expo-av": "~15.0.0",
+    "expo-file-system": "~18.0.0",
+    "expo-image": "~2.0.0",
+    "expo-speech": "~13.0.0",
+    "expo-notifications": "~0.29.0",
+    "expo-haptics": "~14.0.0",
+    "expo-linear-gradient": "~14.0.0",
+    "expo-blur": "~14.0.0",
+    "expo-constants": "~17.0.0",
+    "expo-device": "~7.0.0",
+    "expo-status-bar": "~2.0.0",
+
+    "react-native-purchases": "^8.3.0",
+
+    "@sentry/react-native": "^6.0.0",
+
+    "date-fns": "^4.1.0",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@types/react": "~19.0.0",
+    "@types/react-native": "~0.73.0",
+    "@types/lodash": "^4.17.0",
+    "typescript": "^5.7.0",
+    "eslint": "^9.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "prettier": "^3.4.0",
+    "eas-cli": "^15.0.0"
+  }
+}
