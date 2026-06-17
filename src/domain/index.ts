@@ -17,3 +17,4 @@ export * from './services/achievements';
 export * from './services/compareToIdeal';
 export * from './services/bestRep';
 export * from './services/leaderboard';
+export * from './services/onboarding';
