@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint:
+    name: Lint (architecture boundaries)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: ESLint (hexagonal boundary rules)
+        run: npm run lint
+      # NOTE: `tsc --noEmit` is intentionally not gated yet — the live-engine
+      # screen references not-yet-built modules (BIOM-17). Add the type-check
+      # job here once those land.
