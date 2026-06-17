@@ -44,6 +44,7 @@ module.exports = [
       'babel.config.js',
       'metro.config.js',
       'eslint.config.js',
+      'vitest.config.ts',
     ],
   },
 
