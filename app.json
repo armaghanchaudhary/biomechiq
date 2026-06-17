@@ -61,8 +61,7 @@
           "icon": "./assets/notification-icon.png",
           "color": "#00E5FF"
         }
-      ],
-      "expo-av"
+      ]
     ],
     "experiments": {
       "typedRoutes": true

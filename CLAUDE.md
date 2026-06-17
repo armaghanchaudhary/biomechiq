@@ -35,7 +35,7 @@ See `docs/PHASES.md` for the full checklist. Phase 1 goal:
 
 | Decision | Choice | Why |
 |---|---|---|
-| Framework | Expo SDK 55 + RN 0.83 New Architecture | Single codebase iOS/Android/Web, JSI performance |
+| Framework | Expo SDK 56 + RN 0.85 New Architecture | Single codebase iOS/Android/Web, JSI performance |
 | Pose detection | react-native-mediapipe-posedetection | GPU, 33 landmarks, works iOS+Android, no bridge |
 | Pose web | @mediapipe/tasks-vision | Official Google JS library |
 | Object ML | react-native-fast-tflite + YOLOv8n.tflite | C++ runtime, no bridge, 6MB model |
