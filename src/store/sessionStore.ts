@@ -9,7 +9,7 @@ import {
   Landmark,
   SpeedSample,
   CoachingTip,
-} from '../models/types';
+} from '@/domain';
 
 interface LiveMetrics {
   currentSpeed: number;

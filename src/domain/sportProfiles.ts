@@ -1,6 +1,6 @@
-// src/models/SportProfiles.ts
-// Ideal biomechanical joint angle ranges per sport
-// Based on sports science literature
+// src/domain/sportProfiles.ts
+// Ideal biomechanical joint angle ranges per sport (sports-science literature).
+// PURE domain data.
 
 import { PoseLandmark, SportProfile } from './types';
 

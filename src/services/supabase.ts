@@ -2,7 +2,7 @@
 // Supabase client + typed database operations
 
 import { createClient } from '@supabase/supabase-js';
-import { SessionSummary, SessionState, Sport } from '../models/types';
+import { SessionSummary, SessionState, Sport } from '@/domain';
 
 // ── Environment ─────────────────────────────────────────
 // In production: set via EAS Secrets / .env

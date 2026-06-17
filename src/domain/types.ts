@@ -1,5 +1,6 @@
-// src/models/types.ts
-// All core type definitions for BiomechIQ
+// src/domain/types.ts
+// Core domain entities & value objects for BiomechIQ.
+// PURE: no React, no Expo, no vendor SDK imports may appear in this layer.
 
 export type Sport =
   | 'tennis'
