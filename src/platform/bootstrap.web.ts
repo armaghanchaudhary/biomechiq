@@ -1,19 +1,27 @@
 // src/platform/bootstrap.web.ts
 // Web composition. Selected automatically by Metro's platform extensions.
-// Web uses different adapters for the same ports (getUserMedia, tasks-vision, etc).
+// The cross-platform adapters below are pure JS / fetch and run unchanged on web;
+// web-specific live-engine adapters (getUserMedia, tasks-vision) are wired later.
 
-import { registerDomainDefaults } from './container';
+import { registerDomainDefaults, register } from './container';
+import { ClaudeCoachingProvider } from '@/adapters/claude/claudeCoachingProvider';
+import { ReferenceObjectCalibration } from '@/adapters/calibration/referenceObjectCalibration';
+import { SupabaseSessionRepository } from '@/adapters/supabase/sessionRepository';
+import { SupabaseMediaStorage } from '@/adapters/supabase/mediaStorage';
+import { SupabaseAuthProvider } from '@/adapters/supabase/authProvider';
 
 export function bootstrap(): void {
-  registerDomainDefaults();
+  registerDomainDefaults(); // speedEstimator = domain SpeedEngine
 
-  // --- web adapters, wired incrementally ---
-  // register('cameraSource', new GetUserMediaSource());            // BIOM-17
-  // register('poseProvider', new TasksVisionPoseProvider());       // BIOM-18 (web)
-  // register('objectDetector', new ColorSamplerDetector());        // BIOM-19 (web fallback)
-  // register('overlayRenderer', new SkiaWebOverlayRenderer());     // BIOM-20
-  // register('recorder', new MediaRecorderRecorder());             // BIOM-31
-  // register('coachingProvider', new ClaudeCoachingProvider());    // BIOM-27
-  // register('sessionRepository', new SupabaseSessionRepository());// BIOM-35
-  // ... (remaining ports shared with native where possible)
+  register('coachingProvider', new ClaudeCoachingProvider());     // BIOM-27/28
+  register('calibrationStrategy', new ReferenceObjectCalibration()); // BIOM-23
+  register('sessionRepository', new SupabaseSessionRepository());  // BIOM-35
+  register('mediaStorage', new SupabaseMediaStorage());           // BIOM-36
+  register('authProvider', new SupabaseAuthProvider());           // BIOM-35
+
+  // --- web live-engine adapters, wired incrementally ---
+  // register('cameraSource', new GetUserMediaSource());           // BIOM-17
+  // register('poseProvider', new TasksVisionPoseProvider());      // BIOM-18 (web)
+  // register('objectDetector', new ColorSamplerDetector());       // BIOM-19 (web fallback)
+  // register('overlayRenderer', new SkiaWebOverlayRenderer());    // BIOM-20
 }
