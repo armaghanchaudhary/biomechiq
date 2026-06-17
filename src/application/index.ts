@@ -7,3 +7,4 @@ export * from './analyzeFrame';
 export * from './generateCoaching';
 export * from './recordSession';
 export * from './saveSession';
+export * from './coachingChat';

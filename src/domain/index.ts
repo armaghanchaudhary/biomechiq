@@ -14,3 +14,6 @@ export * from './services/personalBests';
 export * from './services/goals';
 export * from './services/streaks';
 export * from './services/achievements';
+export * from './services/compareToIdeal';
+export * from './services/bestRep';
+export * from './services/leaderboard';

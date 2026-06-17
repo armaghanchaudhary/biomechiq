@@ -5,6 +5,8 @@
 
 import { registerDomainDefaults, register } from './container';
 import { ClaudeCoachingProvider } from '@/adapters/claude/claudeCoachingProvider';
+import { TemplatedCoachingProvider } from '@/adapters/coaching/templatedCoachingProvider';
+import { CoachingWithFallback } from '@/adapters/coaching/coachingWithFallback';
 import { ReferenceObjectCalibration } from '@/adapters/calibration/referenceObjectCalibration';
 import { SupabaseSessionRepository } from '@/adapters/supabase/sessionRepository';
 import { SupabaseMediaStorage } from '@/adapters/supabase/mediaStorage';
@@ -13,7 +15,10 @@ import { SupabaseAuthProvider } from '@/adapters/supabase/authProvider';
 export function bootstrap(): void {
   registerDomainDefaults(); // speedEstimator = domain SpeedEngine
 
-  register('coachingProvider', new ClaudeCoachingProvider());     // BIOM-27/28
+  register(
+    'coachingProvider',
+    new CoachingWithFallback(new ClaudeCoachingProvider(), new TemplatedCoachingProvider())
+  ); // BIOM-27/28/30 — Claude with offline templated fallback
   register('calibrationStrategy', new ReferenceObjectCalibration()); // BIOM-23
   register('sessionRepository', new SupabaseSessionRepository());  // BIOM-35
   register('mediaStorage', new SupabaseMediaStorage());           // BIOM-36
