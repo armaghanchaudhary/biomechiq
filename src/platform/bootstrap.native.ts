@@ -1,25 +1,38 @@
 // src/platform/bootstrap.native.ts
 // Native (iOS/Android) composition. Selected automatically by Metro's platform extensions.
-// Adapters are wired here incrementally as they land (BIOM-17+).
+// Only pure-JS, cross-platform adapters are wired today; native-only and live-engine
+// adapters are uncommented as their features land.
 
-import { registerDomainDefaults } from './container';
+import { registerDomainDefaults, register } from './container';
+import { ClaudeCoachingProvider } from '@/adapters/claude/claudeCoachingProvider';
+import { ReferenceObjectCalibration } from '@/adapters/calibration/referenceObjectCalibration';
+import { SupabaseSessionRepository } from '@/adapters/supabase/sessionRepository';
+import { SupabaseMediaStorage } from '@/adapters/supabase/mediaStorage';
+import { SupabaseAuthProvider } from '@/adapters/supabase/authProvider';
 
 export function bootstrap(): void {
-  registerDomainDefaults();
+  registerDomainDefaults(); // speedEstimator = domain SpeedEngine
 
-  // --- wired incrementally as adapters are implemented ---
-  // register('cameraSource', new VisionCameraSource());            // BIOM-17
-  // register('poseProvider', new MediaPipePoseProvider());         // BIOM-18
-  // register('objectDetector', new TfliteYoloDetector());          // BIOM-19
-  // register('overlayRenderer', new SkiaOverlayRenderer());        // BIOM-20
-  // register('recorder', new VisionCameraRecorder());              // BIOM-31
-  // register('calibrationStrategy', new ReferenceObjectCalibration()); // BIOM-23
-  // register('coachingProvider', new ClaudeCoachingProvider());    // BIOM-27
-  // register('sessionRepository', new SupabaseSessionRepository());// BIOM-35
-  // register('mediaStorage', new SupabaseMediaStorage());          // BIOM-36
-  // register('authProvider', new SupabaseAuthProvider());          // BIOM-35
-  // register('billingProvider', new RevenueCatBilling());          // BIOM-58
-  // register('analyticsSink', new PostHogSentrySink());            // BIOM-61
-  // register('notificationProvider', new ExpoNotifications());     // BIOM-54
-  // register('chartRenderer', new VictoryNativeRenderer());        // BIOM-39
+  // Cross-platform adapters (pure JS / network only) — safe on native + web.
+  register('coachingProvider', new ClaudeCoachingProvider());     // BIOM-27/28
+  register('calibrationStrategy', new ReferenceObjectCalibration()); // BIOM-23
+  register('sessionRepository', new SupabaseSessionRepository());  // BIOM-35
+  register('mediaStorage', new SupabaseMediaStorage());           // BIOM-36
+  register('authProvider', new SupabaseAuthProvider());           // BIOM-35
+
+  // --- native-only adapters (wire when their feature lands) ---
+  // import { CompositeAnalyticsSink } from '@/adapters/analytics/compositeAnalyticsSink';
+  // import { SentryAnalyticsSink } from '@/adapters/analytics/sentryAnalyticsSink';
+  // register('analyticsSink', new CompositeAnalyticsSink([new SentryAnalyticsSink()])); // BIOM-61
+  // import { ExpoNotificationProvider } from '@/adapters/notifications/expoNotificationProvider';
+  // register('notificationProvider', new ExpoNotificationProvider());                   // BIOM-54
+  // import { RevenueCatBillingProvider } from '@/adapters/billing/revenueCatBillingProvider';
+  // register('billingProvider', new RevenueCatBillingProvider());                       // BIOM-58
+
+  // --- live-engine ports (BIOM-17..31) ---
+  // register('cameraSource', new VisionCameraSource());
+  // register('poseProvider', new MediaPipePoseProvider());
+  // register('objectDetector', new TfliteYoloDetector());
+  // register('overlayRenderer', new SkiaOverlayRenderer());
+  // register('recorder', new VisionCameraRecorder());
 }
