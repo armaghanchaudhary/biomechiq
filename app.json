@@ -18,7 +18,7 @@
       "bundleIdentifier": "com.biomechiq.app",
       "buildNumber": "1",
       "infoPlist": {
-        "NSCameraUsageDescription": "BiomechIQ uses your camera to analyze body movement and track sports objects in real time.",
+        "NSCameraUsageDescription": "BiomechIQ needs camera access to analyze your movement.",
         "NSMicrophoneUsageDescription": "Microphone access is needed for video session recording.",
         "NSPhotoLibraryUsageDescription": "BiomechIQ saves session recordings to your photo library."
       },
@@ -61,15 +61,23 @@
           "icon": "./assets/notification-icon.png",
           "color": "#00E5FF"
         }
+      ],
+      [
+        "react-native-mediapipe-posedetection",
+        {
+          "assetsPaths": ["./assets/models/"]
+        }
       ]
     ],
     "experiments": {
       "typedRoutes": true
     },
     "extra": {
+      "router": {},
       "eas": {
-        "projectId": "YOUR_EAS_PROJECT_ID"
+        "projectId": "71f951f1-1b3c-42b4-9bde-0bfae044f5c1"
       }
-    }
+    },
+    "owner": "armaghan.dev"
   }
 }
