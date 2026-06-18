@@ -22,10 +22,13 @@ import {
   Camera,
   useCameraDevice,
   useCameraPermission,
-  useFrameProcessor,
-  runAtTargetFps,
 } from 'react-native-vision-camera';
-import { useSharedValue, runOnJS } from 'react-native-reanimated';
+import { useSharedValue } from 'react-native-reanimated';
+import {
+  usePoseDetection as useMediapipePose,
+  RunningMode,
+  Delegate,
+} from 'react-native-mediapipe-posedetection';
 import {
   Canvas,
   Path,
@@ -37,7 +40,6 @@ import {
   Group,
 } from '@shopify/react-native-skia';
 import { usePoseDetection } from '../../src/hooks/usePoseDetection';
-import { useObjectTracking } from '../../src/hooks/useObjectTracking';
 import { useSessionStore } from '../../src/store/sessionStore';
 import { MetricsPanel } from '../../src/components/camera/MetricsPanel';
 import { SportSelector } from '../../src/components/ui/SportSelector';
@@ -66,42 +68,65 @@ export default function AnalyzerScreen() {
   const objectTrailSV = useSharedValue<Array<{ x: number; y: number }>>([]);
   const speedSV = useSharedValue(0);
 
-  // Hooks that process detection results and update the store
+  // Pose form-scoring bridge (runs on the JS thread).
   const { processLandmarks } = usePoseDetection();
-  const { processObject } = useObjectTracking();
 
-  // ── Frame Processor ──────────────────────────────────
-  // This runs on the native thread every frame
-  const frameProcessor = useFrameProcessor((frame) => {
-    'worklet';
+  // ── Pose Frame Processor (MediaPipe) ─────────────────
+  // The MediaPipe library OWNS the camera frame processor: it runs BlazePose on
+  // the GPU delegate (throttled internally) and delivers 33 landmarks here via
+  // onResults on the JS thread. We fan those into (1) the Skia overlay shared
+  // value and (2) the domain form-scoring pipeline.
+  //
+  // Object/speed (YOLO) is NOT wired here: VisionCamera allows only one frame
+  // processor per camera and this one is owned by MediaPipe, so the object pipe
+  // needs a separate integration (see BIOM-17 notes / the pose+speed fork).
+  const pose = useMediapipePose(
+    {
+      onResults: (bundle) => {
+        if (bundle.inferenceTime > 0) {
+          useSessionStore.getState().updateFPS(Math.round(1000 / bundle.inferenceTime));
+        }
 
-    runAtTargetFps(30, () => {
-      'worklet';
+        const person = bundle.results?.[0]?.landmarks?.[0];
+        if (!person || person.length === 0) {
+          landmarksSV.value = [];
+          processLandmarks(null);
+          return;
+        }
 
-      // NOTE: In the actual implementation, you call the native modules here:
-      //
-      // const poseResult = poseDetection.detect(frame);
-      // if (poseResult?.landmarks) {
-      //   landmarksSV.value = poseResult.landmarks.map(l => [l.x, l.y, l.z, l.visibility]);
-      //   runOnJS(processLandmarks)(poseResult.landmarks);
-      // }
-      //
-      // const yoloResult = objectDetector.detect(frame);
-      // if (yoloResult?.detections?.[0]) {
-      //   const d = yoloResult.detections[0];
-      //   const pos = { x: d.boundingBox.left + d.boundingBox.width/2,
-      //                  y: d.boundingBox.top + d.boundingBox.height/2,
-      //                  w: d.boundingBox.width, h: d.boundingBox.height };
-      //   objectPosSV.value = pos;
-      //   const trail = [...objectTrailSV.value, { x: pos.x, y: pos.y }].slice(-20);
-      //   objectTrailSV.value = trail;
-      //   runOnJS(processObject)(pos, frame.timestamp);
-      // } else {
-      //   objectPosSV.value = null;
-      //   runOnJS(processObject)(null, frame.timestamp);
-      // }
-    });
-  }, []);
+        // Skia overlay (read on the UI thread). NOTE: maps normalized frame
+        // coords straight to the canvas; refine with the provided ViewCoordinator
+        // for exact aspect/rotation alignment during on-device tuning.
+        landmarksSV.value = person.map((l) => [
+          l.x,
+          l.y,
+          l.z,
+          l.visibility ?? l.presence ?? 1,
+        ]);
+
+        processLandmarks(
+          person.map((l) => ({
+            x: l.x,
+            y: l.y,
+            z: l.z,
+            visibility: l.visibility ?? l.presence ?? 1,
+          }))
+        );
+      },
+      onError: (e) => {
+        console.warn('[pose] detection error:', e.message);
+      },
+    },
+    RunningMode.LIVE_STREAM,
+    'pose_landmarker_lite.task',
+    {
+      numPoses: 1,
+      minPoseDetectionConfidence: 0.5,
+      minPosePresenceConfidence: 0.5,
+      minTrackingConfidence: 0.5,
+      delegate: Delegate.GPU,
+    }
+  );
 
   // ── Permission Gate ──────────────────────────────────
   if (!hasPermission) {
@@ -135,10 +160,9 @@ export default function AnalyzerScreen() {
         style={StyleSheet.absoluteFill}
         device={device}
         isActive={true}
-        frameProcessor={frameProcessor}
+        frameProcessor={pose.frameProcessor}
+        onLayout={pose.cameraViewLayoutChangeHandler}
         onInitialized={() => setCameraReady(true)}
-        fps={60}
-        videoStabilizationMode="cinematic"
       />
 
       {/* ── SKIA OVERLAY ── */}
